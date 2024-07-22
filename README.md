@@ -32,7 +32,7 @@ class ReaderStats extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   CircleAvatar(
-                    backgroundImage: NetworkImage('https://example.com/avatar.jpg'), // Replace with actual URL
+                    backgroundImage: NetworkImage('https://example.com/avatar.jpg'), 
                   ),
                 ],
               ),
