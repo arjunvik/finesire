@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +13,34 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ReaderStats extends StatelessWidget {
+class ReaderStats extends StatefulWidget {
+  @override
+  _ReaderStatsState createState() => _ReaderStatsState();
+}
+
+class _ReaderStatsState extends State<ReaderStats> {
+  int progressNumber = 543;
+  bool isLoading = false;
+
+  Future<void> fetchProgressNumber() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    final response = await http.get(Uri.parse('https://www.randomnumberapi.com/api/v1.0/random?min=100&max=1000&count=1'));
+
+    if (response.statusCode == 200) {
+      setState(() {
+        progressNumber = json.decode(response.body)[0];
+        isLoading = false;
+      });
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load progress number');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +59,7 @@ class ReaderStats extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   CircleAvatar(
-                    backgroundImage: NetworkImage('avt.jpg'), 
+                    backgroundImage: NetworkImage('https://example.com/avatar.jpg'), // Replace with actual URL
                   ),
                 ],
               ),
@@ -48,7 +77,7 @@ class ReaderStats extends StatelessWidget {
                   children: [
                     StatCard(
                       title: 'PROGRESS',
-                      value: '543',
+                      value: isLoading ? 'Loading...' : '$progressNumber',
                       subtitle: 'Out of 1,225 pages\n#5 among friends',
                       color: Colors.yellow,
                       icon: Icons.book,
@@ -85,11 +114,17 @@ class ReaderStats extends StatelessWidget {
                 ),
               ),
               ElevatedButton(
+                onPressed: fetchProgressNumber,
+                child: Text('Fetch Random Progress Number'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              ElevatedButton(
                 onPressed: () {},
                 child: Text('Add friends'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-
                 ),
               ),
             ],
